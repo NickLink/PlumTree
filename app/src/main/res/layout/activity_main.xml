@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.plumsdealscalendar.MainActivity">
+
+
+    <RadioGroup
+            android:id="@+id/main_menu_group"
+            android:layout_width="fill_parent"
+            android:layout_height="52dp"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <RadioButton android:id="@+id/menu_calendar_item"
+                android:button="@null"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/menu_calendar_selector"
+                android:layout_weight="1"/>
+
+            <RadioButton android:id="@+id/menu_busines_item"
+                android:button="@null"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/menu_busines_selector"
+                android:layout_weight="1"/>
+
+            <RadioButton android:id="@+id/menu_settings_item"
+                android:button="@null"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/menu_settings_selector"
+                android:layout_weight="1"/>
+
+        </RadioGroup>
+
+    <FrameLayout
+        android:id="@+id/frame_place_inner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/main_menu_group">
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/frame_place_outer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        android:visibility="gone">
+
+    </FrameLayout>
+
+
+</RelativeLayout>

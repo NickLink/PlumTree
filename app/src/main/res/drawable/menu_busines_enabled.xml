@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="#5230ab" />
+                </shape>
+            </item>
+
+            <item android:bottom="5dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="#ffffff" />
+                </shape>
+            </item>
+            <item>
+                <bitmap android:gravity="center" android:src="@drawable/plums_on" />
+            </item>
+
+        </layer-list>
+    </item>
+</selector>
