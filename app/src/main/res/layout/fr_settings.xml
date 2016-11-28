@@ -1,10 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll_other"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF">
 
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/listView" />
-</RelativeLayout>
+        <LinearLayout
+            android:id="@+id/linear_other"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:id="@+id/profile_rl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/mySettingsItem"
+                android:onClick="">
+
+                <ImageView
+                    android:id="@+id/profile_photo"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/photo_profil"/>
+
+                <TextView
+                    android:id="@+id/profile_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toRightOf="@+id/profile_photo"
+                    tools:ignore="MissingPrefix"
+                    fontPath="fonts/robotobold.ttf"
+                    android:text="11111111111111111111"/>
+
+                <TextView
+                    android:id="@+id/profile_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="45dp"
+                    android:layout_toRightOf="@+id/profile_photo"
+                    tools:ignore="MissingPrefix"
+                    fontPath="fonts/robotobold.ttf"
+                    android:text="11111111111111111111" />
+            </RelativeLayout>
+
+            <View
+                style="@style/myDivider" />
+
+            <RelativeLayout
+                android:id="@+id/fbusines_rl"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                style="@style/mySettingsItem" >
+
+                <ImageView
+                    android:id="@+id/other_fbusines_icon"
+                    style="@style/mySettingsIcon"
+                    android:src="@drawable/followed" />
+
+                <TextView
+                    android:id="@+id/other_fbusines"
+                    style="@style/mySettingsText"
+                    android:layout_toRightOf="@+id/other_fbusines_icon"
+                    android:text="@string/settings_followed"/>
+
+                <TextView
+                    android:id="@+id/fbusines_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    tools:ignore="MissingPrefix"
+                    fontPath="fonts/robotobold.ttf"/>
+            </RelativeLayout>
+
+            <View
+                style="@style/myDivider" />
+
+            <RelativeLayout
+                android:id="@+id/appsettings_rl"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                style="@style/mySettingsItem" >
+
+                <ImageView
+                    android:id="@+id/other_appsettings_icon"
+                    style="@style/mySettingsIcon"
+                    android:src="@drawable/app_settings" />
+
+                <TextView
+                    android:id="@+id/other_appsettings"
+                    style="@style/mySettingsText"
+                    android:layout_toRightOf="@+id/other_appsettings_icon"
+                    android:text="@string/settings_app"/>
+            </RelativeLayout>
+
+            <View
+                style="@style/myDivider" />
+
+            <RelativeLayout
+                android:id="@+id/feedback_rl"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                style="@style/mySettingsItem" >
+
+                <ImageView
+                    android:id="@+id/other_feedback_icon"
+                    style="@style/mySettingsIcon"
+                    android:src="@drawable/feedback" />
+
+                <TextView
+                    android:id="@+id/other_feedback"
+                    style="@style/mySettingsText"
+                    android:layout_toRightOf="@+id/other_feedback_icon"
+                    android:text="@string/settings_feedback"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/myDivider" />
+
+            <RelativeLayout
+                android:id="@+id/privatpolicy_rl"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                style="@style/mySettingsItem" >
+
+                <ImageView
+                    android:id="@+id/other_privatpolicy_icon"
+                    style="@style/mySettingsIcon"
+                    android:src="@drawable/feedback" />
+
+                <TextView
+                    android:id="@+id/other_privatpolicy"
+                    style="@style/mySettingsText"
+                    android:layout_toRightOf="@+id/other_privatpolicy_icon"
+                    android:text="@string/settings_terms"/>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/myDivider" />
+
+            <RelativeLayout
+                android:id="@+id/show_tutorial_rl"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                style="@style/mySettingsItem" >
+
+                <ImageView
+                    android:id="@+id/other_privatpolicy_icon2"
+                    style="@style/mySettingsIcon"
+                    android:src="@drawable/feedback" />
+
+                <TextView
+                    android:id="@+id/other_show_tutorial"
+                    style="@style/mySettingsText"
+                    android:text="@string/settings_show"
+                    android:layout_toRightOf="@+id/other_privatpolicy_icon2"  />
+
+            </RelativeLayout>
+
+            <View
+                style="@style/myDivider" />
+
+            <RelativeLayout
+                android:id="@+id/exit_rl"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:padding="20dp" >
+
+                <TextView
+                    android:id="@+id/other_exit"
+                    style="@style/mySettingsText"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/settings_logout"
+                    android:textColor="@color/shadow_text"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+</ScrollView>

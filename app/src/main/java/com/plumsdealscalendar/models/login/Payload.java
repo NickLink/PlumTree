@@ -22,6 +22,8 @@ public class Payload extends RealmObject{
     public int followedBusiness;
     public int contactsCount;
 
+    public String saved_image;
+
     public int getUserId() {
         return userId;
     }
@@ -140,5 +142,13 @@ public class Payload extends RealmObject{
 
     public void setContactsCount(int contactsCount) {
         this.contactsCount = contactsCount;
+    }
+
+    public String getSaved_image() {
+        return saved_image;
+    }
+
+    public void setSaved_image(String saved_image) {
+        this.saved_image = saved_image;
     }
 }

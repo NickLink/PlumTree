@@ -14,4 +14,8 @@
     <dimen name="log_edit_marginRight">30dp</dimen>
     <dimen name="log_edit_marginTop">50dp</dimen>
 
+
+    <dimen name="settings_pad_vertical">15dp</dimen>
+    <dimen name="settings_pad_horizontal">19dp</dimen>
+
 </resources>

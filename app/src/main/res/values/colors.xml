@@ -14,4 +14,7 @@
     <color name="text_color">#080808</color>
     <color name="text_hint">#C6C6C6</color>
 
+    <color name="divider">#EFF3F6</color>
+    <color name="shadow_text">#C7C7C7</color>
+
 </resources>

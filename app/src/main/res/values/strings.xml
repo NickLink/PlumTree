@@ -6,5 +6,11 @@
     <string name="password_hint">Password</string>
     <string name="login_enter">Enter</string>
 
+    <string name="settings_followed">Followed Businesses</string>
+    <string name="settings_app">App Settings</string>
+    <string name="settings_feedback">Feedback</string>
+    <string name="settings_terms">Terms of Service</string>
+    <string name="settings_show">Show Tutorial</string>
+    <string name="settings_logout">Logout from Application</string>
 
 </resources>

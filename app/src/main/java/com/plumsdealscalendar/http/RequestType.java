@@ -1,6 +1,8 @@
 package com.plumsdealscalendar.http;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.provider.SyncStateContract;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -12,6 +14,8 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.StringRequest;
 import com.plumsdealscalendar.Const;
 import com.plumsdealscalendar.app.MyApplication;
@@ -95,5 +99,18 @@ public class RequestType {
             return "Connection TimeOut! Please check your internet connection.";
         } else
             return "Absolytly unknown error...";
+    }
+
+    public void makeImageRequest(String url) {
+        MyApplication.getInstance().getImageLoader().get(url, new ImageLoader.ImageListener() {
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+                request.image_result(req_type, response.getBitmap());
+            }
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                request.http_error(req_type, ErrorMessage(error));
+            }
+        });
     }
 }

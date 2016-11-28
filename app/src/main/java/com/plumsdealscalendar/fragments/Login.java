@@ -1,12 +1,15 @@
 package com.plumsdealscalendar.fragments;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.plumsdealscalendar.R;
 import com.plumsdealscalendar.http.HttpRequest;
@@ -14,10 +17,12 @@ import com.plumsdealscalendar.http.RequestType;
 import com.plumsdealscalendar.models.Parser;
 import com.plumsdealscalendar.models.login.Error;
 import com.plumsdealscalendar.models.login.Payload;
+import com.plumsdealscalendar.utils.Images;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 
 import io.realm.Realm;
@@ -28,6 +33,8 @@ import io.realm.Realm;
 public class Login extends Fragment implements HttpRequest{
     private String TAG = getClass().getSimpleName();
     LoginCompleteListener loginCompleteListener;
+    Payload payload;
+    Error error;
 
     public interface LoginCompleteListener {
         public void LoginComplete(Payload payload);
@@ -77,11 +84,15 @@ public class Login extends Fragment implements HttpRequest{
             JSONObject data = new JSONObject(result);
             switch (data.optInt("status")){
                 case 1:
-                    Payload payload = Parser.getPayload(data.getJSONObject("payload"));
-                    Login_ok(payload);
+                    payload = Parser.getPayload(data.getJSONObject("payload"));
+                    if(payload.getImage() != null){
+                        Log.d(TAG, "Data url =" + payload.getImage());
+                        LoadImage(payload.getImage());
+                    }
+
                     break;
                 case 2:
-                    Error error = Parser.getError(data.getJSONArray("error").getJSONObject(0));
+                    error = Parser.getError(data.getJSONArray("error").getJSONObject(0));
                     Login_error(error);
                     break;
                 default:
@@ -93,11 +104,24 @@ public class Login extends Fragment implements HttpRequest{
     }
 
     @Override
-    public void http_error(int type, String error) {
-
+    public void image_result(int type, Bitmap bitmap) {
+        if(bitmap != null)
+            payload.setSaved_image(Images.encodeTobase64(bitmap));
+        Login_ok();
     }
 
-    void Login_ok(Payload payload){
+    @Override
+    public void http_error(int type, String error) {
+        switch (type){
+            case 1:
+                break;
+            case 9:
+                Login_ok();
+                break;
+        }
+    }
+
+    void Login_ok(){
         // Initialize Realm
         Realm.init(getActivity());
         // Get a Realm instance for this thread
@@ -112,6 +136,11 @@ public class Login extends Fragment implements HttpRequest{
     }
 
     void Login_error(Error error){
+        Toast.makeText(getActivity(), "Error type " + error.getMessage(), Toast.LENGTH_LONG).show();
+    }
 
+    void LoadImage(String image){
+        RequestType login = new RequestType(getActivity(), 9, this);
+        login.makeImageRequest(image);
     }
 }
