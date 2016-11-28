@@ -9,10 +9,12 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.plumsdealscalendar.fragments.Login;
+import com.plumsdealscalendar.fragments.Settings;
+import com.plumsdealscalendar.models.login.Payload;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Login.LoginCompleteListener {
     RadioGroup main_menu_group;
     FrameLayout frame_place_inner, frame_place_outer;
     FragmentManager fragmentManager;
@@ -73,6 +75,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void LoginComplete(Payload payload) {
+        fragmentManager.beginTransaction().replace(R.id.frame_place_inner, new Settings(), "settings").commit();
     }
 
 //    @Override

@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
-import com.plumsdealscalendar.models.login.UserData;
+import com.plumsdealscalendar.models.login.Payload;
 
 /**
  * Created by NickNb on 24.11.2016.
@@ -12,7 +12,7 @@ import com.plumsdealscalendar.models.login.UserData;
 public class RetainData extends Fragment {
 
     // data object we want to retain
-    private UserData data;
+    private Payload data;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -20,11 +20,11 @@ public class RetainData extends Fragment {
         setRetainInstance(true);
     }
 
-    public void setData(UserData data) {
+    public void setData(Payload data) {
         this.data = data;
     }
 
-    public UserData getData() {
+    public Payload getData() {
         return data;
     }
 }
