@@ -1,7 +1,7 @@
 package com.plumsdealscalendar.fragments;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,14 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.plumsdealscalendar.R;
-import com.plumsdealscalendar.adapters.settings.SettingsAdapter;
 import com.plumsdealscalendar.models.login.Payload;
 import com.plumsdealscalendar.utils.Images;
+import com.plumsdealscalendar.interfaces.UI_Interfaces;
 
 import io.realm.Realm;
 
@@ -24,19 +23,31 @@ import io.realm.Realm;
  * Created by NickNb on 23.11.2016.
  */
 public class Settings extends Fragment implements View.OnClickListener {
+    private String TAG = getClass().getSimpleName();
     private Payload payload;
-
+    UI_Interfaces UIInterfaces;
     DatePickerDialog datePickerDialog;
 
-    public Settings newInstance(Payload payload){
-        Settings fragment = new Settings();
-        Bundle args = new Bundle();
-        args.putString("name", payload.getName());
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    public Settings newInstance(Payload payload){
+//        Settings fragment = new Settings();
+//        Bundle args = new Bundle();
+//        args.putString("name", payload.getName());
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
     public Settings(){
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            UIInterfaces = (UI_Interfaces) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
     }
 
     DatePickerDialog.OnDateSetListener myCallBack = new DatePickerDialog.OnDateSetListener() {
@@ -58,6 +69,7 @@ public class Settings extends Fragment implements View.OnClickListener {
         if(savedInstanceState != null){
             //Restoring fragment state
         }
+
         RelativeLayout profile_rl = (RelativeLayout)view.findViewById(R.id.profile_rl);
         profile_rl.setOnClickListener(this);
 
@@ -103,8 +115,8 @@ public class Settings extends Fragment implements View.OnClickListener {
             fbusines_count.setText(String.valueOf(payload.getFollowedBusiness()));
         }
 
-        datePickerDialog = new DatePickerDialog(getActivity(), myCallBack, 2000, 11, 11);
-        datePickerDialog.show();
+/*        datePickerDialog = new DatePickerDialog(getActivity(), myCallBack, 2000, 11, 11);
+        datePickerDialog.show();*/
 
         return view;
     }
@@ -113,6 +125,7 @@ public class Settings extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.profile_rl:
+                UIInterfaces.ProfileView();
                 break;
 
             case R.id.fbusines_rl:

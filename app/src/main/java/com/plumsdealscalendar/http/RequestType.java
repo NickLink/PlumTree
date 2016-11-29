@@ -1,20 +1,19 @@
 package com.plumsdealscalendar.http;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.provider.SyncStateContract;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkError;
 import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
+import com.android.volley.RetryPolicy;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.StringRequest;
 import com.plumsdealscalendar.Const;
@@ -35,41 +34,62 @@ public class RequestType {
     private Context context;
     private HttpRequest request;
     int req_type;
+    RetryPolicy mRetryPolicy;
 
     public RequestType(Context context, int req_type, HttpRequest request) { //, Context context
         this.context = context;
         this.request = request;
         this.req_type = req_type;
+        mRetryPolicy = new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
     }
 
     public void StringPostRequest(final HashMap<String, String> params) {
-            StringRequest stringObjReq = new StringRequest(Request.Method.POST, Const.API_PATH,
-                    new Response.Listener<String>() { //jsonBody
-                @Override
-                public void onResponse(String response) {
-                    request.string_result(req_type, response.toString());
-                }
-            },
+        StringRequest stringObjReq = new StringRequest(Request.Method.POST, Const.API_PATH,
+                new Response.Listener<String>() { //jsonBody
+                    @Override
+                    public void onResponse(String response) {
+                        request.string_result(req_type, response.toString());
+                    }
+                },
                 new ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         request.http_error(req_type, ErrorMessage(error));
                     }
-                })
-            {
-                @Override
-                public String getBodyContentType() {
-                    return "application/json";
-                }
-                @Override
-                public byte[] getBody() {
-                    return getJsonBody(params);
-                }
-            };
-            MyApplication.getInstance().addToRequestQueue(stringObjReq, Const.TAG_JSON);
+                }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+
+            @Override
+            public byte[] getBody() {
+                return getJsonBody(params);
+            }
+        };
+        stringObjReq.setRetryPolicy(mRetryPolicy);
+        MyApplication.getInstance().addToRequestQueue(stringObjReq, Const.TAG_JSON);
     }
 
-    private byte[] getJsonBody(HashMap<String, String> params){
+    public void makeImageRequest(String url) {
+        ImageLoader imageLoader = MyApplication.getInstance().getImageLoader();
+        imageLoader.get(url, new ImageLoader.ImageListener() {
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+                request.image_result(req_type, response.getBitmap());
+            }
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                request.http_error(req_type, ErrorMessage(error));
+            }
+        });
+    }
+
+    private byte[] getJsonBody(HashMap<String, String> params) {
         JSONObject jsonBody = new JSONObject();
         try {
             for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -78,8 +98,7 @@ public class RequestType {
             return jsonBody == null ? null : jsonBody.toString().getBytes("utf-8");
         } catch (JSONException e) {
             return null;
-        }
-        catch (UnsupportedEncodingException uee) {
+        } catch (UnsupportedEncodingException uee) {
             return null;
         }
     }
@@ -99,18 +118,5 @@ public class RequestType {
             return "Connection TimeOut! Please check your internet connection.";
         } else
             return "Absolytly unknown error...";
-    }
-
-    public void makeImageRequest(String url) {
-        MyApplication.getInstance().getImageLoader().get(url, new ImageLoader.ImageListener() {
-            @Override
-            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                request.image_result(req_type, response.getBitmap());
-            }
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                request.http_error(req_type, ErrorMessage(error));
-            }
-        });
     }
 }

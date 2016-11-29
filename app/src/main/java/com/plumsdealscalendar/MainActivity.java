@@ -4,20 +4,25 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.plumsdealscalendar.fragments.Login;
+import com.plumsdealscalendar.fragments.ProfileView;
 import com.plumsdealscalendar.fragments.Settings;
 import com.plumsdealscalendar.models.login.Payload;
+import com.plumsdealscalendar.interfaces.UI_Interfaces;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class MainActivity extends AppCompatActivity implements Login.LoginCompleteListener {
+public class MainActivity extends AppCompatActivity implements UI_Interfaces {
     RadioGroup main_menu_group;
     FrameLayout frame_place_inner, frame_place_outer;
     FragmentManager fragmentManager;
+    static String TAG = "MainActivity";
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -50,13 +55,21 @@ public class MainActivity extends AppCompatActivity implements Login.LoginComple
         frame_place_inner = (FrameLayout) findViewById(R.id.frame_place_inner);
         frame_place_outer = (FrameLayout) findViewById(R.id.frame_place_outer);
         fragmentManager = getSupportFragmentManager();
+        fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                Log.d(TAG, "Data onBackStackChanged count = " + fragmentManager.getBackStackEntryCount());
+                Log.d(TAG, "Data onBackStackChanged list = "
+                        + fragmentManager.getFragments().toString());
+            }
+        });
 
         main_menu_group.check(R.id.menu_calendar_item);
 
         main_menu_group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                switch (i){
+                switch (i) {
                     case R.id.menu_calendar_item:
                         Toast.makeText(getBaseContext(), "Selected Calendar", Toast.LENGTH_SHORT).show();
                         break;
@@ -67,7 +80,11 @@ public class MainActivity extends AppCompatActivity implements Login.LoginComple
 
                     case R.id.menu_settings_item:
                         Toast.makeText(getBaseContext(), "Selected Settings", Toast.LENGTH_SHORT).show();
-                        fragmentManager.beginTransaction().replace(R.id.frame_place_inner, new Login(), "login").commit();
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.frame_place_inner, new Login(), "login")
+                                //.addToBackStack("settings")
+                                .commit();
+                        fragmentManager.executePendingTransactions();
                         break;
 
                 }
@@ -79,7 +96,31 @@ public class MainActivity extends AppCompatActivity implements Login.LoginComple
 
     @Override
     public void LoginComplete(Payload payload) {
-        fragmentManager.beginTransaction().replace(R.id.frame_place_inner, new Settings(), "settings").commit();
+        fragmentManager.beginTransaction()
+                .replace(R.id.frame_place_inner, new Settings(), "settings")
+                .addToBackStack("settings")
+                .commit();
+    }
+
+    @Override
+    public void ProfileView() {
+        Log.d(TAG, "Data ProfileView");
+        frame_place_outer.setVisibility(View.VISIBLE);
+        fragmentManager.beginTransaction()
+                .replace(R.id.frame_place_outer, new ProfileView(), "profile_view") //frame_place_outer
+                .addToBackStack("profile_view")
+                .commit();
+    }
+
+    @Override
+    public void ProfileEdit() {
+
+    }
+
+    @Override
+    public void HideOuterFrame() {
+        Log.d(TAG, "Data HideOuterFrame");
+        frame_place_outer.setVisibility(View.GONE);
     }
 
 //    @Override
@@ -89,4 +130,20 @@ public class MainActivity extends AppCompatActivity implements Login.LoginComple
 //        //dataFragment.setData(collectMyLoadedData());
 //    }
 
+    @Override
+    public void onBackPressed() {
+        fragmentManager.executePendingTransactions();
+        Log.d(TAG, "Data onBackPressed count = " + fragmentManager.getBackStackEntryCount());
+        if (fragmentManager.getBackStackEntryCount() >= 2) {
+            HideOuterFrame();
+        }
+        if (fragmentManager.getBackStackEntryCount() > 0) {
+            //Back to stack
+            fragmentManager.popBackStack();
+        } else {
+            //Finnish activity dialog
+            super.onBackPressed();
+        }
+
+    }
 }

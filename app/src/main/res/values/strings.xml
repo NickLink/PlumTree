@@ -12,5 +12,10 @@
     <string name="settings_terms">Terms of Service</string>
     <string name="settings_show">Show Tutorial</string>
     <string name="settings_logout">Logout from Application</string>
+    <string name="profile_name">Name:</string>
+    <string name="profile_dob">D.O.B.:</string>
+    <string name="settings_plum_points">PLUM points</string>
+    <string name="settings_information">Information</string>
+    <string name="profile_view_title">Your profile</string>
 
 </resources>

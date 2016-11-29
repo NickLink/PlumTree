@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.plumsdealscalendar.R;
 import com.plumsdealscalendar.http.HttpRequest;
 import com.plumsdealscalendar.http.RequestType;
+import com.plumsdealscalendar.interfaces.UI_Interfaces;
 import com.plumsdealscalendar.models.Parser;
 import com.plumsdealscalendar.models.login.Error;
 import com.plumsdealscalendar.models.login.Payload;
@@ -22,7 +23,6 @@ import com.plumsdealscalendar.utils.Images;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 
 import io.realm.Realm;
@@ -32,13 +32,10 @@ import io.realm.Realm;
  */
 public class Login extends Fragment implements HttpRequest{
     private String TAG = getClass().getSimpleName();
-    LoginCompleteListener loginCompleteListener;
+    UI_Interfaces UIInterfaces;
     Payload payload;
     Error error;
-
-    public interface LoginCompleteListener {
-        public void LoginComplete(Payload payload);
-    }
+    boolean get_data;
 
     public Login(){
     }
@@ -46,11 +43,8 @@ public class Login extends Fragment implements HttpRequest{
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
         try {
-            loginCompleteListener = (LoginCompleteListener) activity;
+            UIInterfaces = (UI_Interfaces) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnHeadlineSelectedListener");
@@ -105,6 +99,7 @@ public class Login extends Fragment implements HttpRequest{
 
     @Override
     public void image_result(int type, Bitmap bitmap) {
+        Log.d(TAG, "Data image_result OK");
         if(bitmap != null)
             payload.setSaved_image(Images.encodeTobase64(bitmap));
         Login_ok();
@@ -116,23 +111,29 @@ public class Login extends Fragment implements HttpRequest{
             case 1:
                 break;
             case 9:
+                Log.d(TAG, "Data http_error 9");
                 Login_ok();
                 break;
         }
     }
 
     void Login_ok(){
-        // Initialize Realm
-        Realm.init(getActivity());
-        // Get a Realm instance for this thread
-        Realm realm = Realm.getDefaultInstance();
+        if(!get_data){
+            get_data = true;
+            Log.d(TAG, "Data Login_ok");
+            // Initialize Realm
+            Realm.init(getActivity());
+            // Get a Realm instance for this thread
+            Realm realm = Realm.getDefaultInstance();
 
-        // Persist your data in a transaction
-        realm.beginTransaction();
-        realm.delete(Payload.class);
-        Payload copyToRealm = realm.copyToRealm(payload); // Persist unmanaged objects
-        realm.commitTransaction();
-        loginCompleteListener.LoginComplete(payload);
+            // Persist your data in a transaction
+            realm.beginTransaction();
+            realm.delete(Payload.class);
+            Payload copyToRealm = realm.copyToRealm(payload); // Persist unmanaged objects
+            realm.commitTransaction();
+            UIInterfaces.LoginComplete(payload);
+        }
+
     }
 
     void Login_error(Error error){

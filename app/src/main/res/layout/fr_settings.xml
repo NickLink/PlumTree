@@ -16,8 +16,7 @@
                 android:id="@+id/profile_rl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/mySettingsItem"
-                android:onClick="">
+                style="@style/mySettingsItem">
 
                 <ImageView
                     android:id="@+id/profile_photo"
