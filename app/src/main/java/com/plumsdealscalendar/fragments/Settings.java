@@ -26,7 +26,6 @@ public class Settings extends Fragment implements View.OnClickListener {
     private String TAG = getClass().getSimpleName();
     private Payload payload;
     UI_Interfaces UIInterfaces;
-    DatePickerDialog datePickerDialog;
 
 //    public Settings newInstance(Payload payload){
 //        Settings fragment = new Settings();
@@ -115,8 +114,7 @@ public class Settings extends Fragment implements View.OnClickListener {
             fbusines_count.setText(String.valueOf(payload.getFollowedBusiness()));
         }
 
-/*        datePickerDialog = new DatePickerDialog(getActivity(), myCallBack, 2000, 11, 11);
-        datePickerDialog.show();*/
+
 
         return view;
     }

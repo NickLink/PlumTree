@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,7 +25,7 @@ import io.realm.RealmModel;
 /**
  * Created by NickNb on 29.11.2016.
  */
-public class ProfileView extends Fragment{
+public class ProfileView extends Fragment implements View.OnClickListener {
     private String TAG = getClass().getSimpleName();
     UI_Interfaces UIInterfaces;
     UserDataInterfaces userDataInterfaces;
@@ -65,6 +66,11 @@ public class ProfileView extends Fragment{
         profile_email = (TextView)view.findViewById(R.id.profile_email);
         profile_phone = (TextView)view.findViewById(R.id.profile_phone);
         profile_gender = (TextView)view.findViewById(R.id.profile_gender);
+
+        ImageButton edit_button = (ImageButton)view.findViewById(R.id.edit_button);
+        edit_button.setOnClickListener(this);
+        ImageButton back_button = (ImageButton)view.findViewById(R.id.back_button);
+        back_button.setOnClickListener(this);
 
         // Initialize Realm
         //Realm.init(getActivity());
@@ -118,4 +124,16 @@ public class ProfileView extends Fragment{
 
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.edit_button:
+                UIInterfaces.ProfileEdit();
+                break;
+            case R.id.back_button:
+                UIInterfaces.HideOuterFrame();
+                UIInterfaces.onBackPressed();
+                break;
+        }
+    }
 }

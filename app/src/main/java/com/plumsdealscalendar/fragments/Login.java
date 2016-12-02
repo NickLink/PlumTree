@@ -30,14 +30,14 @@ import io.realm.Realm;
 /**
  * Created by NickNb on 24.11.2016.
  */
-public class Login extends Fragment implements HttpRequest{
+public class Login extends Fragment implements HttpRequest {
     private String TAG = getClass().getSimpleName();
     UI_Interfaces UIInterfaces;
     Payload payload;
     Error error;
     boolean get_data;
 
-    public Login(){
+    public Login() {
     }
 
     @Override
@@ -76,10 +76,10 @@ public class Login extends Fragment implements HttpRequest{
     public void string_result(int type, String result) {
         try {
             JSONObject data = new JSONObject(result);
-            switch (data.optInt("status")){
+            switch (data.optInt("status")) {
                 case 1:
                     payload = Parser.getPayload(data.getJSONObject("payload"));
-                    if(payload.getImage() != null){
+                    if (payload.getImage() != null) {
                         Log.d(TAG, "Data url =" + payload.getImage());
                         LoadImage(payload.getImage());
                     }
@@ -100,14 +100,15 @@ public class Login extends Fragment implements HttpRequest{
     @Override
     public void image_result(int type, Bitmap bitmap) {
         Log.d(TAG, "Data image_result OK");
-        if(bitmap != null)
+        if (bitmap != null) {
             payload.setSaved_image(Images.encodeTobase64(bitmap));
-        Login_ok();
+            Login_ok();
+        }
     }
 
     @Override
     public void http_error(int type, String error) {
-        switch (type){
+        switch (type) {
             case 1:
                 break;
             case 9:
@@ -117,30 +118,26 @@ public class Login extends Fragment implements HttpRequest{
         }
     }
 
-    void Login_ok(){
-        if(!get_data){
-            get_data = true;
-            Log.d(TAG, "Data Login_ok");
-            // Initialize Realm
-            Realm.init(getActivity());
-            // Get a Realm instance for this thread
-            Realm realm = Realm.getDefaultInstance();
+    void Login_ok() {
+        Log.d(TAG, "Data Login_ok");
+        // Initialize Realm
+        Realm.init(getActivity());
+        // Get a Realm instance for this thread
+        Realm realm = Realm.getDefaultInstance();
 
-            // Persist your data in a transaction
-            realm.beginTransaction();
-            realm.delete(Payload.class);
-            Payload copyToRealm = realm.copyToRealm(payload); // Persist unmanaged objects
-            realm.commitTransaction();
-            UIInterfaces.LoginComplete(payload);
-        }
-
+        // Persist your data in a transaction
+        realm.beginTransaction();
+        realm.delete(Payload.class);
+        Payload copyToRealm = realm.copyToRealm(payload); // Persist unmanaged objects
+        realm.commitTransaction();
+        UIInterfaces.LoginComplete(payload);
     }
 
-    void Login_error(Error error){
+    void Login_error(Error error) {
         Toast.makeText(getActivity(), "Error type " + error.getMessage(), Toast.LENGTH_LONG).show();
     }
 
-    void LoadImage(String image){
+    void LoadImage(String image) {
         RequestType login = new RequestType(getActivity(), 9, this);
         login.makeImageRequest(image);
     }

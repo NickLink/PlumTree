@@ -10,7 +10,9 @@ import android.widget.FrameLayout;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.plumsdealscalendar.app.MyApplication;
 import com.plumsdealscalendar.fragments.Login;
+import com.plumsdealscalendar.fragments.ProfileEdit;
 import com.plumsdealscalendar.fragments.ProfileView;
 import com.plumsdealscalendar.fragments.Settings;
 import com.plumsdealscalendar.models.login.Payload;
@@ -58,9 +60,10 @@ public class MainActivity extends AppCompatActivity implements UI_Interfaces {
         fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
-                Log.d(TAG, "Data onBackStackChanged count = " + fragmentManager.getBackStackEntryCount());
-                Log.d(TAG, "Data onBackStackChanged list = "
-                        + fragmentManager.getFragments().toString());
+                //fragmentManager.executePendingTransactions();
+                //Log.d(TAG, "Data onBackStackChanged count = " + fragmentManager.getBackStackEntryCount());
+                //Log.d(TAG, "Data onBackStackChanged list = "
+                //        + fragmentManager.getFragments().toString());
             }
         });
 
@@ -84,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements UI_Interfaces {
                                 .replace(R.id.frame_place_inner, new Login(), "login")
                                 //.addToBackStack("settings")
                                 .commit();
-                        fragmentManager.executePendingTransactions();
                         break;
 
                 }
@@ -105,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements UI_Interfaces {
     @Override
     public void ProfileView() {
         Log.d(TAG, "Data ProfileView");
+        frame_place_inner.setVisibility(View.GONE);
         frame_place_outer.setVisibility(View.VISIBLE);
         fragmentManager.beginTransaction()
                 .replace(R.id.frame_place_outer, new ProfileView(), "profile_view") //frame_place_outer
@@ -114,13 +117,17 @@ public class MainActivity extends AppCompatActivity implements UI_Interfaces {
 
     @Override
     public void ProfileEdit() {
-
+        fragmentManager.beginTransaction()
+                .replace(R.id.frame_place_outer, new ProfileEdit(), "profile_edit") //frame_place_outer
+                .addToBackStack("profile_edit")
+                .commit();
     }
 
     @Override
     public void HideOuterFrame() {
         Log.d(TAG, "Data HideOuterFrame");
         frame_place_outer.setVisibility(View.GONE);
+        frame_place_inner.setVisibility(View.VISIBLE);
     }
 
 //    @Override
@@ -132,11 +139,11 @@ public class MainActivity extends AppCompatActivity implements UI_Interfaces {
 
     @Override
     public void onBackPressed() {
-        fragmentManager.executePendingTransactions();
+        //fragmentManager.executePendingTransactions();
         Log.d(TAG, "Data onBackPressed count = " + fragmentManager.getBackStackEntryCount());
-        if (fragmentManager.getBackStackEntryCount() >= 2) {
-            HideOuterFrame();
-        }
+//        if (fragmentManager.getBackStackEntryCount() > 1) {
+//            HideOuterFrame();
+//        }
         if (fragmentManager.getBackStackEntryCount() > 0) {
             //Back to stack
             fragmentManager.popBackStack();
@@ -145,5 +152,11 @@ public class MainActivity extends AppCompatActivity implements UI_Interfaces {
             super.onBackPressed();
         }
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        MyApplication.getInstance().cancelAllRequests();
     }
 }
