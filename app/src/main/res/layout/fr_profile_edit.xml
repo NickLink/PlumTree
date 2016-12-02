@@ -122,7 +122,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center"
-                android:background="@drawable/blue_spinner"
+                android:background="@drawable/blue_btn_selector"
+                android:textColor="@color/white"
                 android:paddingLeft="30dp"
                 android:paddingRight="30dp"
                 android:text="27 August 2014" />

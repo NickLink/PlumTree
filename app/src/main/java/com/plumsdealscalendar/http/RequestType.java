@@ -35,11 +35,13 @@ public class RequestType {
     private HttpRequest request;
     int req_type;
     RetryPolicy mRetryPolicy;
+    private String path;
 
-    public RequestType(Context context, int req_type, HttpRequest request) { //, Context context
+    public RequestType(Context context, int req_type, String path, HttpRequest request) { //, Context context
         this.context = context;
         this.request = request;
         this.req_type = req_type;
+        this.path = path;
         mRetryPolicy = new DefaultRetryPolicy(
                 0,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
@@ -47,7 +49,7 @@ public class RequestType {
     }
 
     public void StringPostRequest(final HashMap<String, String> params) {
-        StringRequest stringObjReq = new StringRequest(Request.Method.POST, Const.API_PATH,
+        StringRequest stringObjReq = new StringRequest(Request.Method.POST, path,
                 new Response.Listener<String>() { //jsonBody
                     @Override
                     public void onResponse(String response) {
@@ -119,4 +121,19 @@ public class RequestType {
         } else
             return "Absolytly unknown error...";
     }
+
+    private String getPath(int type){
+        String path;
+        switch (req_type) {
+            case 1:
+                path = Const.API_Login;
+                break;
+
+            default:
+                path = "";
+                break;
+        }
+        return path;
+    }
+
 }

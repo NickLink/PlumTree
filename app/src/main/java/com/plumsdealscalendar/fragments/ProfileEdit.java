@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,24 +23,31 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.plumsdealscalendar.Const;
 import com.plumsdealscalendar.R;
 import com.plumsdealscalendar.database.UserDataImp;
+import com.plumsdealscalendar.http.HttpRequest;
+import com.plumsdealscalendar.http.RequestType;
 import com.plumsdealscalendar.interfaces.UI_Interfaces;
 import com.plumsdealscalendar.interfaces.UserDataInterfaces;
 import com.plumsdealscalendar.models.login.Payload;
 import com.plumsdealscalendar.utils.Converters;
 import com.plumsdealscalendar.utils.Images;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.File;
+import java.util.HashMap;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmModel;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * Created by NickNb on 30.11.2016.
  */
-public class ProfileEdit extends Fragment implements DatePickerDialog.OnDateSetListener, View.OnClickListener {
+public class ProfileEdit extends Fragment implements DatePickerDialog.OnDateSetListener, View.OnClickListener , HttpRequest {
     private String TAG = getClass().getSimpleName();
     UI_Interfaces UIInterfaces;
     UserDataInterfaces userDataInterfaces;
@@ -51,6 +59,7 @@ public class ProfileEdit extends Fragment implements DatePickerDialog.OnDateSetL
     EditText profile_name, profile_email, profile_phone;
 
     Button setdate_button;
+    boolean new_image;
 
     @Override
     public void onAttach(Activity activity) {
@@ -155,6 +164,20 @@ public class ProfileEdit extends Fragment implements DatePickerDialog.OnDateSetL
     }
 
     void SavePayload(){
+        HashMap params = new HashMap<String, String>();
+        params.put("email", "max@max.com");
+        params.put("password", "123123");
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(Const.API_Save_Profile);
+        sb.append(payload.getUserId());
+        sb.append(Const.API_Acess_token);
+        sb.append(payload.getApiHash());
+
+        RequestType login = new RequestType(getActivity(), 1, sb.toString(), this);
+        login.StringPostRequest(params);
+
+
         realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         payload.setName(profile_name.getText().toString());
@@ -166,7 +189,6 @@ public class ProfileEdit extends Fragment implements DatePickerDialog.OnDateSetL
     }
 
     void GetImage() {
-
         final String[] items = new String[]{"Take from camera",
                 "Select from gallery"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
@@ -177,13 +199,14 @@ public class ProfileEdit extends Fragment implements DatePickerDialog.OnDateSetL
             public void onClick(DialogInterface dialog, int item) {
                 if (item == 0) {
                     //pick from camera
-
+                    PickFromCamera();
                 } else {
                     //pick from file
-
+                    PickFromFile();
                 }
             }
         });
+        builder.show();
     }
 
     //==========================================================================
@@ -202,10 +225,22 @@ public class ProfileEdit extends Fragment implements DatePickerDialog.OnDateSetL
         switch (requestCode) {
             case PICK_FROM_CAMERA:
                 mImageCaptureUri = data.getData();
+                DoCrop();
                 break;
             case PICK_FROM_FILE:
                 mImageCaptureUri = data.getData();
-                patch = getRealPathFromURI(mImageCaptureUri);
+                DoCrop();
+                //patch = getRealPathFromURI(mImageCaptureUri);
+                break;
+            case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                if (resultCode == RESULT_OK) {
+                    profile_photo.setImageURI(result.getUri());
+                    new_image = true;
+                    //Uri resultUri = result.getUri();
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                    Exception error = result.getError();
+                }
 
                 break;
         }
@@ -232,6 +267,14 @@ public class ProfileEdit extends Fragment implements DatePickerDialog.OnDateSetL
         startActivityForResult(intent, PICK_FROM_CAMERA);
     }
 
+    private void DoCrop(){
+        CropImage.activity(mImageCaptureUri)
+                .setAspectRatio(1, 1)
+                .setAllowRotation(false)
+                .setRequestedSize(200, 200)
+                .start(getContext(), this);
+    }
+
     private String getRealPathFromURI(Uri contentUri) {
         String[] proj = { MediaStore.Images.Media.DATA };
         CursorLoader loader = new CursorLoader(getActivity(), contentUri, proj, null, null, null);
@@ -243,4 +286,18 @@ public class ProfileEdit extends Fragment implements DatePickerDialog.OnDateSetL
         return result;
     }
 
+    @Override
+    public void string_result(int type, String result) {
+
+    }
+
+    @Override
+    public void image_result(int type, Bitmap bitmap) {
+
+    }
+
+    @Override
+    public void http_error(int type, String error) {
+
+    }
 }

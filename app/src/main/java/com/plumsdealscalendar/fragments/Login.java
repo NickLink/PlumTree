@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.plumsdealscalendar.Const;
 import com.plumsdealscalendar.R;
 import com.plumsdealscalendar.http.HttpRequest;
 import com.plumsdealscalendar.http.RequestType;
@@ -66,7 +67,7 @@ public class Login extends Fragment implements HttpRequest {
         params.put("email", "max@max.com");
         params.put("password", "123123");
 
-        RequestType login = new RequestType(getActivity(), 1, this);
+        RequestType login = new RequestType(getActivity(), 1, Const.API_Login, this);
         login.StringPostRequest(params);
 
         return view;
@@ -138,7 +139,7 @@ public class Login extends Fragment implements HttpRequest {
     }
 
     void LoadImage(String image) {
-        RequestType login = new RequestType(getActivity(), 9, this);
+        RequestType login = new RequestType(getActivity(), 9, image, this);
         login.makeImageRequest(image);
     }
 }
