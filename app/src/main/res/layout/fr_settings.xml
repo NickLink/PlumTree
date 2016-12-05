@@ -57,7 +57,7 @@
                 android:id="@+id/fbusines_rl"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                style="@style/mySettingsItem" >
+                style="@style/mySettingsItem">
 
                 <ImageView
                     android:id="@+id/other_fbusines_icon"
@@ -87,7 +87,7 @@
                 android:id="@+id/appsettings_rl"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                style="@style/mySettingsItem" >
+                style="@style/mySettingsItem">
 
                 <ImageView
                     android:id="@+id/other_appsettings_icon"

@@ -3,6 +3,7 @@ package com.plumsdealscalendar.fragments;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,11 +14,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.plumsdealscalendar.R;
+import com.plumsdealscalendar.interfaces.UI_Interfaces;
 import com.plumsdealscalendar.models.login.Payload;
 import com.plumsdealscalendar.utils.Images;
-import com.plumsdealscalendar.interfaces.UI_Interfaces;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmModel;
 
 /**
  * Created by NickNb on 23.11.2016.
@@ -26,6 +29,9 @@ public class Settings extends Fragment implements View.OnClickListener {
     private String TAG = getClass().getSimpleName();
     private Payload payload;
     UI_Interfaces UIInterfaces;
+
+    ImageView profile_photo;
+    TextView profile_name, profile_email, fbusines_count;
 
 //    public Settings newInstance(Payload payload){
 //        Settings fragment = new Settings();
@@ -90,17 +96,29 @@ public class Settings extends Fragment implements View.OnClickListener {
         RelativeLayout exit_rl = (RelativeLayout)view.findViewById(R.id.exit_rl);
         exit_rl.setOnClickListener(this);
 
-        ImageView profile_photo = (ImageView)view.findViewById(R.id.profile_photo);
-        TextView profile_name = (TextView)view.findViewById(R.id.profile_name);
-        TextView profile_email = (TextView)view.findViewById(R.id.profile_email);
-        TextView fbusines_count = (TextView)view.findViewById(R.id.fbusines_count);
+        profile_photo = (ImageView)view.findViewById(R.id.profile_photo);
+        profile_name = (TextView)view.findViewById(R.id.profile_name);
+        profile_email = (TextView)view.findViewById(R.id.profile_email);
+        fbusines_count = (TextView)view.findViewById(R.id.fbusines_count);
 
         // Initialize Realm
         Realm.init(getActivity());
         // Get a Realm instance for this thread
         Realm realm = Realm.getDefaultInstance();
-        Payload payload = realm.where(Payload.class).findFirst();
+        payload = realm.where(Payload.class).findFirst();
 
+        payload.addChangeListener(new RealmChangeListener<RealmModel>() {
+            @Override
+            public void onChange(RealmModel element) {
+                Payload p = ((Payload)element);
+                ShowData(p); //payload
+            }
+        });
+        ShowData(payload);
+        return view;
+    }
+
+    void ShowData(Payload payload){
         if(payload.getSaved_image() != null){
             profile_photo.setImageBitmap(Images.decodeBase64(payload.getSaved_image()));
         }
@@ -113,37 +131,41 @@ public class Settings extends Fragment implements View.OnClickListener {
         if(payload.getFollowedBusiness() != 0){
             fbusines_count.setText(String.valueOf(payload.getFollowedBusiness()));
         }
-
-
-
-        return view;
     }
 
     @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.profile_rl:
-                UIInterfaces.ProfileView();
-                break;
+    public void onClick(final View view) {
+        Handler myHandler = new Handler();
+        myHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                switch (view.getId()) {
+                    case R.id.profile_rl:
+                        UIInterfaces.ProfileView();
+                        break;
 
-            case R.id.fbusines_rl:
-                break;
+                    case R.id.fbusines_rl:
+                        break;
 
-            case R.id.appsettings_rl:
-                break;
+                    case R.id.appsettings_rl:
+                        break;
 
-            case R.id.feedback_rl:
-                break;
+                    case R.id.feedback_rl:
+                        break;
 
-            case R.id.privatpolicy_rl:
-                break;
+                    case R.id.privatpolicy_rl:
+                        break;
 
-            case R.id.show_tutorial_rl:
-                break;
+                    case R.id.show_tutorial_rl:
+                        break;
 
-            case R.id.exit_rl:
-                break;
+                    case R.id.exit_rl:
+                        break;
 
-        }
+                }
+            }
+        }, 200);
+
     }
+
 }

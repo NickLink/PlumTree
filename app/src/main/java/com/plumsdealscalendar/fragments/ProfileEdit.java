@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.CursorLoader;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,8 +20,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
-import com.plumsdealscalendar.Const;
+import com.plumsdealscalendar.Constant;
 import com.plumsdealscalendar.R;
 import com.plumsdealscalendar.database.UserDataImp;
 import com.plumsdealscalendar.http.HttpRequest;
@@ -51,8 +50,7 @@ public class ProfileEdit extends Fragment implements DatePickerDialog.OnDateSetL
     private String TAG = getClass().getSimpleName();
     UI_Interfaces UIInterfaces;
     UserDataInterfaces userDataInterfaces;
-    private Realm realm;
-    private Payload payload;
+    private Payload payloadFrom, payloadTo;
     DatePickerDialog datePickerDialog;
 
     ImageView profile_photo, profile_imagebutton;
@@ -60,6 +58,8 @@ public class ProfileEdit extends Fragment implements DatePickerDialog.OnDateSetL
 
     Button setdate_button;
     boolean new_image;
+    Bitmap bitmap;
+    Realm realm;
 
     @Override
     public void onAttach(Activity activity) {
@@ -81,6 +81,7 @@ public class ProfileEdit extends Fragment implements DatePickerDialog.OnDateSetL
             //Restoring fragment state
         }
         Log.d(TAG, "Data ProfileView onCreateView");
+        realm = Realm.getDefaultInstance();
 
         profile_photo = (ImageView)view.findViewById(R.id.profile_photo);
         profile_imagebutton = (ImageView)view.findViewById(R.id.profile_imagebutton);
@@ -97,20 +98,23 @@ public class ProfileEdit extends Fragment implements DatePickerDialog.OnDateSetL
         back_button.setOnClickListener(this);
 
         userDataInterfaces = new UserDataImp();
-        payload = userDataInterfaces.getPayload();
-        payload.addChangeListener(new RealmChangeListener<RealmModel>() {
+        payloadFrom = userDataInterfaces.getPayload();
+
+        payloadFrom.addChangeListener(new RealmChangeListener<RealmModel>() {
             @Override
             public void onChange(RealmModel element) {
-                SetData();
+                Payload p = ((Payload)element);
+                Log.d(TAG, "Data addChangeListener onChange");
+                ShowData(p);
             }
         });
 
-        SetData();
+        ShowData(payloadFrom);
 
         return view;
     }
 
-    void SetData(){
+    void ShowData(Payload payload){
         if(payload.getSaved_image() != null) {
             profile_photo.setImageBitmap(Images.decodeBase64(payload.getSaved_image()));
         }
@@ -165,27 +169,28 @@ public class ProfileEdit extends Fragment implements DatePickerDialog.OnDateSetL
 
     void SavePayload(){
         HashMap params = new HashMap<String, String>();
-        params.put("email", "max@max.com");
-        params.put("password", "123123");
+        params.put("name", profile_name.getText().toString());
+        params.put("birthday", "2011-11-11");
+        params.put("email", profile_email.getText().toString());
+        params.put("phone", profile_phone.getText().toString());
+        params.put("gender", "m");
 
         StringBuilder sb = new StringBuilder();
-        sb.append(Const.API_Save_Profile);
-        sb.append(payload.getUserId());
-        sb.append(Const.API_Acess_token);
-        sb.append(payload.getApiHash());
+        sb.append(Constant.API_Save_Profile);
+        sb.append(payloadFrom.getUserId());
+        sb.append(Constant.API_Acess_token);
+        sb.append(payloadFrom.getApiHash());
 
-        RequestType login = new RequestType(getActivity(), 1, sb.toString(), this);
-        login.StringPostRequest(params);
+        RequestType requestType = new RequestType(getActivity(), 1, sb.toString(), this);
+        if(new_image){
+            requestType.saveProfileAccount(params, Images.getByteFromBitmap(bitmap));
+        } else {
+            requestType.StringPostRequest(params);
+        }
+
+        //login.StringPostRequest(params);
 
 
-        realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        payload.setName(profile_name.getText().toString());
-        payload.setEmail(profile_email.getText().toString());
-        payload.setPhone(profile_phone.getText().toString());
-
-        realm.insertOrUpdate(payload);
-        realm.commitTransaction();
     }
 
     void GetImage() {
@@ -235,9 +240,11 @@ public class ProfileEdit extends Fragment implements DatePickerDialog.OnDateSetL
             case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
                 CropImage.ActivityResult result = CropImage.getActivityResult(data);
                 if (resultCode == RESULT_OK) {
-                    profile_photo.setImageURI(result.getUri());
-                    new_image = true;
-                    //Uri resultUri = result.getUri();
+                    bitmap = Images.getBitmapFromUri(getActivity(), result.getUri());
+                    if(bitmap != null){
+                        profile_photo.setImageBitmap(bitmap);
+                        new_image = true;
+                    }
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                     Exception error = result.getError();
                 }
@@ -275,20 +282,11 @@ public class ProfileEdit extends Fragment implements DatePickerDialog.OnDateSetL
                 .start(getContext(), this);
     }
 
-    private String getRealPathFromURI(Uri contentUri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
-        CursorLoader loader = new CursorLoader(getActivity(), contentUri, proj, null, null, null);
-        Cursor cursor = loader.loadInBackground();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        String result = cursor.getString(column_index);
-        cursor.close();
-        return result;
-    }
-
     @Override
     public void string_result(int type, String result) {
+        Toast.makeText(getActivity(), "result " + result, Toast.LENGTH_LONG).show();
 
+        updateNewCard(realm, payloadFrom);
     }
 
     @Override
@@ -298,6 +296,27 @@ public class ProfileEdit extends Fragment implements DatePickerDialog.OnDateSetL
 
     @Override
     public void http_error(int type, String error) {
-
+        Toast.makeText(getActivity(), "error " + error, Toast.LENGTH_LONG).show();
     }
+
+    public void updateNewCard(Realm realm, Payload card) {
+        final int id = card.getId();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                Payload toEdit = realm.where(Payload.class)
+                        .equalTo("id", id).findFirst();
+                if(toEdit != null) {
+                    if(bitmap != null && new_image) {
+                        toEdit.setSaved_image(Images.encodeTobase64(bitmap));
+                        Log.d(TAG, "Data setImage");
+                    }
+                    toEdit.setName(profile_name.getText().toString());
+                    toEdit.setEmail(profile_email.getText().toString());
+                    toEdit.setPhone(profile_phone.getText().toString());
+                }
+            }
+        });
+    }
+
 }

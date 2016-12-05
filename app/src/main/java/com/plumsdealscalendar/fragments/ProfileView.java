@@ -84,15 +84,16 @@ public class ProfileView extends Fragment implements View.OnClickListener {
         payload.addChangeListener(new RealmChangeListener<RealmModel>() {
             @Override
             public void onChange(RealmModel element) {
-                SetData();
+                Payload p = ((Payload)element);
+                ShowData(p);
             }
         });
 
-        SetData();
+        ShowData(payload);
         return view;
     }
 
-    void SetData(){
+    void ShowData(Payload payload){
         if(payload.getSaved_image() != null) {
             profile_photo.setImageBitmap(Images.decodeBase64(payload.getSaved_image()));
         }
