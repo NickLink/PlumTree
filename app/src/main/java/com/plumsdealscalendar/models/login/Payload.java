@@ -1,11 +1,13 @@
 package com.plumsdealscalendar.models.login;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by NickNb on 28.11.2016.
  */
 public class Payload extends RealmObject{
+    @PrimaryKey public int id = 1;
     public int userId;
     public String name;
     public String email;
@@ -21,8 +23,15 @@ public class Payload extends RealmObject{
     public int plumPoints;
     public int followedBusiness;
     public int contactsCount;
-
     public String saved_image;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public int getUserId() {
         return userId;

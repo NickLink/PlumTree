@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical"
+    android:clickable="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/top_menu_height"
+        android:background="@color/blue_text"
+        android:paddingRight="@dimen/settings_pad_horizontal"
+        android:paddingLeft="@dimen/settings_pad_horizontal">
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:src="@drawable/back"
+            android:background="@null"/>
+
+        <TextView
+            android:id="@+id/top_title"
+            style="@style/myText20WhiteTitle"
+            android:text="@string/profile_view_title"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/back_button"/>
+
+        <ImageButton
+            android:id="@+id/edit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/pen"
+            android:background="@null"/>
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/scroll_profile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/linear_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/settings_pad_vertical"
+                android:paddingLeft="@dimen/settings_pad_horizontal"
+                android:paddingRight="@dimen/settings_pad_horizontal"
+                android:paddingTop="@dimen/settings_pad_vertical">
+
+                <ImageView
+                    android:id="@+id/profile_photo"
+                    android:layout_width="47dp"
+                    android:layout_height="47dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/photo_profil" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/profile_nameTitle"
+                        style="@style/myText16Black"
+                        android:text="@string/profile_name" />
+
+                    <TextView
+                        android:id="@+id/profile_ageTitle"
+                        style="@style/myText16Black"
+                        android:layout_marginTop="@dimen/text_margin_top"
+                        android:text="@string/profile_dob" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/profile_name"
+                        style="@style/myText16BlueBold"
+                        android:text="Ujean Poloz" />
+
+                    <TextView
+                        android:id="@+id/profile_age"
+                        style="@style/myText16BlueBold"
+                        android:layout_marginTop="@dimen/text_margin_top"
+                        android:text="1.11.2011" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/profile_plumpoints"
+                style="@style/myText16BlueBold"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/settings_pad_vertical"
+                android:layout_marginLeft="@dimen/settings_pad_horizontal"
+                android:layout_marginRight="@dimen/settings_pad_horizontal"
+                android:layout_marginTop="@dimen/settings_pad_vertical"
+                android:background="@drawable/plumpoints_button"
+                android:gravity="center"
+                android:text="@string/settings_plum_points" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="5dip"
+                android:background="@drawable/drop_shadow"></View>
+
+            <RelativeLayout
+                android:id="@+id/profile_inf_rl"
+                android:layout_width="fill_parent"
+                android:layout_height="28dp"
+                android:background="@color/gray_back">
+
+                <TextView
+                    android:id="@+id/profile_info"
+                    style="@style/myText14Black"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="19dp"
+                    android:text="@string/settings_information" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/profile_email_rl"
+                style="@style/mySettingsRL">
+
+                <TextView
+                    android:id="@+id/profile_email_header"
+                    style="@style/myText14Black"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/settings_email_address" />
+
+                <TextView
+                    android:id="@+id/profile_email"
+                    style="@style/myText16BlueBold"
+                    android:layout_alignParentBottom="true"
+                    android:text="1111111111111111111" />
+
+            </RelativeLayout>
+
+            <View style="@style/myDivider" />
+
+            <RelativeLayout
+                android:id="@+id/profile_phone_rl"
+                style="@style/mySettingsRL">
+
+                <TextView
+                    android:id="@+id/profile_phone_header"
+                    style="@style/myText14Black"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/settings_phone_number" />
+
+                <TextView
+                    android:id="@+id/profile_phone"
+                    style="@style/myText16BlueBold"
+                    android:layout_alignParentBottom="true"
+                    android:text="+97230 99 98 765" />
+
+            </RelativeLayout>
+
+            <View style="@style/myDivider" />
+
+            <RelativeLayout
+                android:id="@+id/profile_gender_rl"
+                style="@style/mySettingsRL">
+
+                <TextView
+                    android:id="@+id/profile_gender_header"
+                    style="@style/myText14Black"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/settings_gender" />
+
+                <TextView
+                    android:id="@+id/profile_gender"
+                    style="@style/myText16BlueBold"
+                    android:layout_alignParentBottom="true"
+                    android:text="Male" />
+
+            </RelativeLayout>
+
+            <View style="@style/myDivider" />
+
+        </LinearLayout>
+
+
+    </ScrollView>
+</LinearLayout>

@@ -11,9 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.plumsdealscalendar.Constant;
 import com.plumsdealscalendar.R;
 import com.plumsdealscalendar.http.HttpRequest;
 import com.plumsdealscalendar.http.RequestType;
+import com.plumsdealscalendar.interfaces.UI_Interfaces;
 import com.plumsdealscalendar.models.Parser;
 import com.plumsdealscalendar.models.login.Error;
 import com.plumsdealscalendar.models.login.Payload;
@@ -22,7 +24,6 @@ import com.plumsdealscalendar.utils.Images;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 
 import io.realm.Realm;
@@ -30,27 +31,21 @@ import io.realm.Realm;
 /**
  * Created by NickNb on 24.11.2016.
  */
-public class Login extends Fragment implements HttpRequest{
+public class Login extends Fragment implements HttpRequest {
     private String TAG = getClass().getSimpleName();
-    LoginCompleteListener loginCompleteListener;
+    UI_Interfaces UIInterfaces;
     Payload payload;
     Error error;
+    boolean get_data;
 
-    public interface LoginCompleteListener {
-        public void LoginComplete(Payload payload);
-    }
-
-    public Login(){
+    public Login() {
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
         try {
-            loginCompleteListener = (LoginCompleteListener) activity;
+            UIInterfaces = (UI_Interfaces) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnHeadlineSelectedListener");
@@ -72,7 +67,7 @@ public class Login extends Fragment implements HttpRequest{
         params.put("email", "max@max.com");
         params.put("password", "123123");
 
-        RequestType login = new RequestType(getActivity(), 1, this);
+        RequestType login = new RequestType(getActivity(), 1, Constant.API_Login, this);
         login.StringPostRequest(params);
 
         return view;
@@ -82,10 +77,10 @@ public class Login extends Fragment implements HttpRequest{
     public void string_result(int type, String result) {
         try {
             JSONObject data = new JSONObject(result);
-            switch (data.optInt("status")){
+            switch (data.optInt("status")) {
                 case 1:
                     payload = Parser.getPayload(data.getJSONObject("payload"));
-                    if(payload.getImage() != null){
+                    if (payload.getImage() != null) {
                         Log.d(TAG, "Data url =" + payload.getImage());
                         LoadImage(payload.getImage());
                     }
@@ -105,25 +100,34 @@ public class Login extends Fragment implements HttpRequest{
 
     @Override
     public void image_result(int type, Bitmap bitmap) {
-        if(bitmap != null)
+        Log.d(TAG, "Data image_result OK");
+        if (bitmap != null) {
             payload.setSaved_image(Images.encodeTobase64(bitmap));
-        Login_ok();
+            Login_ok();
+        }
     }
 
     @Override
     public void http_error(int type, String error) {
-        switch (type){
+        switch (type) {
             case 1:
                 break;
             case 9:
+                Log.d(TAG, "Data http_error 9");
                 Login_ok();
                 break;
         }
     }
 
-    void Login_ok(){
+    void Login_ok() {
+        Log.d(TAG, "Data Login_ok");
+        Log.d(TAG, "Data payload name=" + payload.getName());
+        Log.d(TAG, "Data payload email=" + payload.getEmail());
+        Log.d(TAG, "Data payload id=" + payload.getUserId());
+        Log.d(TAG, "Data payload hash=" + payload.getApiHash());
+
         // Initialize Realm
-        Realm.init(getActivity());
+        //Realm.init(getActivity());
         // Get a Realm instance for this thread
         Realm realm = Realm.getDefaultInstance();
 
@@ -132,15 +136,15 @@ public class Login extends Fragment implements HttpRequest{
         realm.delete(Payload.class);
         Payload copyToRealm = realm.copyToRealm(payload); // Persist unmanaged objects
         realm.commitTransaction();
-        loginCompleteListener.LoginComplete(payload);
+        UIInterfaces.LoginComplete(payload);
     }
 
-    void Login_error(Error error){
+    void Login_error(Error error) {
         Toast.makeText(getActivity(), "Error type " + error.getMessage(), Toast.LENGTH_LONG).show();
     }
 
-    void LoadImage(String image){
-        RequestType login = new RequestType(getActivity(), 9, this);
+    void LoadImage(String image) {
+        RequestType login = new RequestType(getActivity(), 9, image, this);
         login.makeImageRequest(image);
     }
 }

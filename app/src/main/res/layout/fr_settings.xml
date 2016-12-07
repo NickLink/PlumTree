@@ -4,7 +4,8 @@
     android:id="@+id/scroll_other"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF">
+    android:background="#FFFFFF"
+    android:clickable="true">
 
         <LinearLayout
             android:id="@+id/linear_other"
@@ -16,8 +17,7 @@
                 android:id="@+id/profile_rl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/mySettingsItem"
-                android:onClick="">
+                style="@style/mySettingsItem">
 
                 <ImageView
                     android:id="@+id/profile_photo"
@@ -57,7 +57,7 @@
                 android:id="@+id/fbusines_rl"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                style="@style/mySettingsItem" >
+                style="@style/mySettingsItem">
 
                 <ImageView
                     android:id="@+id/other_fbusines_icon"
@@ -87,7 +87,7 @@
                 android:id="@+id/appsettings_rl"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                style="@style/mySettingsItem" >
+                style="@style/mySettingsItem">
 
                 <ImageView
                     android:id="@+id/other_appsettings_icon"

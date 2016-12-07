@@ -11,10 +11,13 @@
     <color name="grey_shadow">#D6D6D6</color>
 
     <color name="white">#FFFFFF</color>
-    <color name="text_color">#080808</color>
+    <color name="black_text_color">#080808</color>
     <color name="text_hint">#C6C6C6</color>
 
     <color name="divider">#EFF3F6</color>
     <color name="shadow_text">#C7C7C7</color>
+    <color name="blue_text">#3E1E78</color>
+
+    <color name="gray_back">#EEEEEE</color>
 
 </resources>
